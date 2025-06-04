@@ -41,7 +41,71 @@ By exploring this topic, I will uncover the types of recipes that tend to have m
 
 ## Data Cleaning and Exploratory Data Analysis
 
+Before starting any analysis, I checked the data type of all the columns to understand what steps I needed to take to make the analysis process smoother and more efficient. The types were as follows:
+
+- **name**: object
+- **id**: int64
+- **minutes**: int64
+- **contributor_id**: int64
+- **submitted**: object
+- **tags**: object
+- **nutrition**: object
+- **n_steps**: int64
+- **steps**: object
+- **description**: object
+- **ingredients**: object
+- **n_ingredients**: int64
+- **user_id**: float64
+- **recipe_id**: float64
+- **date**: object
+- **rating**: float64
+- **review**: object
+
 To begin, I sought to streamline my analysis by cleaning the datasets as follows:
 
 1. Left merging the `recipes` and `interactions` datasets together
-2. 
+
+    - This step matched the unique values in `recipe_id` to correctly match reviews with their intended recipes.
+
+1. Replacing values of '0' in the column `ratings` with `np.nan`
+
+    - This step is essential because ratings typically fall on a scale of 1 to 5, not including 0. Any values of '0' indicate a missing value rather than a true rating of 0, and would therefore introduce bias into `ratings`.
+
+1. Adding a column called `avg_rating` containing the average rating per recipe.
+
+    - Averaged all the ratings for each recipe provided by users  to gain a more comprensive metric on how the rceipe was rated as a whole.
+
+1. Converting values in `nutrition` to be a list, rather than a string.
+
+    - This allows for easy extraction of the individual values later on during analysis.
+
+1. Adding a `protein` column containing the percent daily value of protein in the recipe.
+
+    - This was done by applying a lambda function to the lists in `nutrition`, extracting protein (PDV) as a float from index = 4.
+
+    - This step allows for the analysis of trends relating to recipe protein content.
+
+1. Creating `tags_str` containing all the values in the original tags column as one string with each tag seperated by a space. 
+
+    - Allows for text based vectorization techniques and simplifies preprocessing for later token analysis.
+
+The final data frame had the following data types:
+
+- **name**: object 
+- **id**: int64 
+- **minutes**: int64
+- **contributor_id**: int64
+- **submitted**: object 
+- **tags**: object 
+- **nutrition**: object 
+- **n_steps**: int64
+- **steps**: object 
+- **description**: object 
+- **ingredients**: object 
+- **n_ingredients**: int64
+- **rating**: float64 
+- **review**: object 
+- **avg_rating**: float64
+- **protein**: float64 
+- **tags_str**: object 
+ 
