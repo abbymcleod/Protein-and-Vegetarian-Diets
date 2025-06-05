@@ -103,9 +103,41 @@ The final data frame had the following data types:
 - **description**: object 
 - **ingredients**: object 
 - **n_ingredients**: int64
+- **user_id**: float64
+- **recipe_id**: float64
+- **date**: object
 - **rating**: float64 
 - **review**: object 
 - **avg_rating**: float64
 - **protein**: float64 
 - **tags_str**: object 
- 
+
+
+## Assessment of Missingness
+
+The columns `'date'`, `'rating'`, and `'review'` have a significant amount of missing values in the dataset, so I will assess the missingness of these variables. 
+
+### NMAR Analysis
+
+I beleive it is likely that the missingness of `'review'` is **NMAR** because people usually only write reviews if they have strong feelings about a recipe. Writing a review takes considerably more time and energy than just submitting a rating, so people tend to only write reviews when they have something to say. While it could be argued that this is MAR, with the missinginess correlating with extreme scores in `'rating'`, I do not believe this is the case because people sometimes include tips or details about the recipe in their reviews, not just their opinions. 
+
+### Missingness Dependency
+
+The column `'rating'` is one that I beleive could have a variety of reasons justifying its missingness, so I investigated that column next. I first chose to compare assess the missingness of `'rating'` against the column `'avg_rating'` to see if its missingness depended on the overall rating of the recipe. 
+
+> Average Rating and Rating
+
+**Null Hypothesis:** The missingness of the ratings does not depend on the avegrage rating of the recipe.
+
+**Alternate Hypothesis:** The missingness of the ratings does depend on the average rating of the recipe. 
+
+**Test Statistic:** The total variation difference (TVD) of average ratings between the group with missing ratings and without missing ratings.
+
+**Significance Level:** 0.01
+
+<iframe
+  src="assets/tvd.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
