@@ -131,9 +131,13 @@ The column `'rating'` is one that I beleive could have a variety of reasons just
 
 **Alternate Hypothesis:** The missingness of the ratings does depend on the average rating of the recipe. 
 
-**Test Statistic:** The total variation difference (TVD) of average ratings between the group with missing ratings and without missing ratings.
+**Test Statistic:** The total variation distance (TVD) of average ratings between the group with missing ratings and without missing ratings.
 
 **Significance Level:** 0.01
+
+**Observed Statistic:** 0.055
+
+**P-Value:** 0.0000
 
 <iframe
   src="assets/tvd.html"
@@ -141,3 +145,67 @@ The column `'rating'` is one that I beleive could have a variety of reasons just
   height="600"
   frameborder="0"
 ></iframe>
+
+As displayed in the above figure, the observed tvd is much higher than any of the values calculated during the permutation test under the null. The p-value of this test is 0.0000, which is less than the chosen significance level of 0.01. So, if the null hypothesis were true, it would be extremely unlikely that there is a statistic as drastic, or more drastic than the observed statistic, leading me to **reject the null hypothesis**, and conclude that the missingness of the ratings is **MAR**.
+
+This makes sense as people could be less inclined to leave a rating if they were left underwhelmed or uninterested by a recipe. Additionally, food.com or recipe curators may only encourage people to leave ratings if they enjoyed their recipe, but not provide the same encouragement if they didn't.
+
+> Minutes and Rating
+
+**Null Hypothesis:** The missingness of the ratings does not depend on the number of minutes it takes to prepare of the recipe.
+
+**Alternate Hypothesis:** The missingness of the ratings does depend on the number of minutes it takes to prepare of the recipe. 
+
+**Test Statistic:** The mean absolute difference (MAD) of average ratings between the group with missing ratings and without missing ratings.
+
+**Significance Level:** 0.01
+
+**Observed Statistic:** 0.000
+
+**P-Value:** 0.130
+
+<iframe
+  src="assets/mad.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+The observed statistic for this data is very close to 0 with a p-value of 0.130. This means that at the 0.1 significance level, we **fail to reject the null hypothesis**. As shown by the data, it is not unlikely that we got the observed statistic that we got given the null is true. 
+
+### Hypothesis Testing
+
+Through a hypothesis test, I am trying to discover whether there is a relationship between protein content, found in column `'protein'`as percent daily value (PDV), and whether a recipe is vegan or vegetarian, as evidenced by whether they are tagged with 'vegan' or 'vegetarian'. The details of the two sample t test are as follows:
+
+**Null Hypothesis:** There is no differnece in protein content (PDV) in recipes tagged 'vegan' or 'vegetarian' vs those without the tags. 
+
+**Alternative Hypothesis:** Recipes tagged 'vegan' or 'vegetarian' have lower protein (PDV) than those not tagged.
+
+**Test Statistic:** The difference in mean between vegetarian/vegan recipes and normal recipes, divided by the standard error. \( t = \frac{\text{difference in means}}{\text{standard error (SE)}} \)
+
+**Significance Level:** 0.01
+
+The student's t-test is the appropriate test because the predictor (veg vs no veg) is categorical, and we are looking to discover whether the means of these two groups are statistically different, which is what the t-test is designed to do. There is also a decently large sample size, meaning the central limit theorem allows us to assume normality.  
+
+Additionally, when running this test, I used a grouped version of the dataframe `'merged'` that grouped by `'id'` so that each reciped was counted just once in this test. Many recipes had multiple rows due to having multiple reviews correlated with them, and we want to ensure there is no bias due to certain recipes being counted more times during this test. 
+
+It was orignially proposed that vegan and vegetarian recipes have less protein than normal recipes because a primary source of protein in many recipes is animal products, which vegan recipes totally lack, and vegetarian recipes partially lack. The reuslting **p-value** from this test is **0.000**, which is below the significance level, leading us to **reject the null hypothesis** in favor of the alternate. This means that it is unlikely for us to observe the values we did if the null hypothesis is true, suggesting that vegan and vegetarian recipes could correlate with lower protein content. 
+
+<iframe
+  src="assets/ttest.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+### Framing a Prediction Problem
+
+I am building a regression model predicting the protein content (PDV) in a recipe based on the tags assigned to it in the `'tags'` column. `'protein'` is the response variable in this model because it represents the continuous variable being estimated. I chose this as the response variable because protein is a nutritional attribute that many people consider when deciding what to eat, and it is essential to living a healthy lifestyle. The set of features comes form the `'tags'` column, which are easily accessible at the time of prediction. They will be processed using a CountVectorizer within a scikit-learn Pipeline in order to convert the text data into numeric features. The pipeline also predicts protein content using a linear regression model. Model performance is evaluated using mean squared error (MSE) as MSE penalizes larger errors more heavily. 
+
+### Baseline Model
+
+The baseline model is a lienar regression model that predicts the percent daily value of protein in a recipe based on the tags assigned to it. The tags are in the form of one long string with each tag seperated by a space, found in the `'tags_str'` column. This string of tags is the only feature of the model and it is nominal as it represents categorical labels rather than ordered or continuous values. I encoded this nominal feature using scikit-learn's `'CountVectorizer'` which performs a bag of words transformation and expands the tags into multiple bianry features indicating the presence or absence of each tag. The resulting feature matrix consists entirely of nominal, one-hot encoded features, and no quantitative or ordinal features were used. 
+
+After fitting the model to the training data, I used **mean squared error (MSE)** to evaluate its performance. The MSE of the baseline model was **1737.5018** which indicates that the model's predictions are about 41.68% off on average. There is definitely room for the model's performance to imporve as the error is relatively large. To improve predictive performance, I plan on filtering the features to only include those that have a certain threshold numbe rof recipes that have then to avoid any sparse tags from skewing the model's predictions.
+
+### Final Model
