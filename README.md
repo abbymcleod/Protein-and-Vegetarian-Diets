@@ -219,7 +219,7 @@ Additionally, when running this test, I used a grouped version of the dataframe 
 
 It was orignially proposed that vegan and vegetarian recipes have less protein than normal recipes because a primary source of protein in many recipes is animal products, which vegan recipes totally lack, and vegetarian recipes partially lack. The reuslting **p-value** from this test is **0.000**, which is below the significance level, leading us to **reject the null hypothesis** in favor of the alternate. This means that it is unlikely for us to observe the values we did if the null hypothesis is true, suggesting that vegan and vegetarian recipes could correlate with lower protein content. 
 
-The graph below demonstrates just how different the averages between the two groups are with an 18.43 % differnece on average.
+The graph below demonstrates just how different the averages between the two groups are with an 18.43% differnece on average.
 
 <iframe
   src="assets/ttest.html"
@@ -234,13 +234,13 @@ I am building a regression model predicting the protein content (PDV) in a recip
 
 ### Baseline Model
 
-The baseline model is a lienar regression model that predicts the percent daily value of protein in a recipe based on the tags assigned to it. The tags are in the form of one long string with each tag seperated by a space, found in the `'tags_str'` column. This string of tags is the only feature of the model and it is nominal as it represents categorical labels rather than ordered or continuous values. I encoded this nominal feature using scikit-learn's `'CountVectorizer'` which performs a bag of words transformation and expands the tags into multiple bianry features indicating the presence or absence of each tag. The resulting feature matrix consists entirely of nominal, one-hot encoded features, and no quantitative or ordinal features were used. 
+The baseline model is a lienar regression model that predicts the percent daily value of protein in a recipe based on the tags assigned to it and minutes. The tags are in the form of one long string with each tag seperated by a space, found in the `'tags_str'` column, and minutes come from `'minutes'`. This string of tags is nominal as it represents categorical labels rather than ordered or continuous values while minutes is a numerical quantitative feature. I encoded the nominal feature using scikit-learn's `'CountVectorizer'` which performs a bag of words transformation and expands the tags into multiple bianry features indicating the presence or absence of each tag. The resulting feature matrix consists entirely of nominal, one-hot encoded features, and no quantitative or ordinal features were used. 
 
-After fitting the model to the training data, I used **mean squared error (MSE)** to evaluate its performance. The MSE of the baseline model was **1737.5018** which indicates that the model's predictions are about 41.68% off on average. There is definitely room for the model's performance to imporve as the error is relatively large. To improve predictive performance, I plan on filtering the features to only include those that have a certain threshold numbe rof recipes that have then to avoid any sparse tags from skewing the model's predictions.
+After fitting the model to the training data, I used **mean squared error (MSE)** to evaluate its performance. The MSE of the baseline model was **1732.9666** which indicates that the model's predictions are about 41.68% off on average. There is definitely room for the model's performance to imporve as the error is relatively large. To improve predictive performance, I plan on filtering the features to only include those that have a certain threshold number of recipes that have then to avoid any sparse tags from skewing the model's predictions, and to explore what other variables could have a positive impact on its performance.
 
 ### Final Model
 
-The final model contained new features calories per minute, and steps per ingredient, and also only included a refined list of tags. 
+The final model contained new features calories per minute, and steps per ingredient, and also only included a refined list of relevant tags. 
 
 #### Tags
 
