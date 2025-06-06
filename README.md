@@ -201,7 +201,7 @@ This makes sense as people could be less inclined to leave a rating if they were
 
 The observed statistic for this data is very close to 0 with a p-value of 0.130. This means that at the 0.1 significance level, we **fail to reject the null hypothesis**. As shown by the data, it is not unlikely that we got the observed statistic that we got given the null is true. 
 
-### Hypothesis Testing
+## Hypothesis Testing
 
 Through a hypothesis test, I am trying to discover whether there is a relationship between protein content, found in column `'protein'`as percent daily value (PDV), and whether a recipe is vegan or vegetarian, as evidenced by whether they are tagged with 'vegan' or 'vegetarian'. The details of the two sample t test are as follows:
 
@@ -228,7 +228,7 @@ The graph below demonstrates just how different the averages between the two gro
   frameborder="0"
 ></iframe>
 
-### Framing a Prediction Problem
+## Framing a Prediction Problem
 
 I am building a regression model predicting the protein content (PDV) in a recipe based on the tags assigned to it in the `'tags'` column. `'protein'` is the response variable in this model because it represents the continuous variable being estimated. I chose this as the response variable because protein is a nutritional attribute that many people consider when deciding what to eat, and it is essential to living a healthy lifestyle. The set of features comes form the `'tags'` column, which are easily accessible at the time of prediction. They will be processed using a CountVectorizer within a scikit-learn Pipeline in order to convert the text data into numeric features. The pipeline also predicts protein content using a linear regression model. Model performance is evaluated using mean squared error (MSE) as MSE penalizes larger errors more heavily. 
 
@@ -270,3 +270,23 @@ Out of all the hyperparameters used, the best were `{'regressor__max_depth': 10,
 #### Performance
 
 The final model had a MSE of **982.58** which is a significant improvement from the baseline model with a MSE of 1737.5018. This value means that, on average, the final model's prediction is off by about 31.35% daily value. This imporvement can be attributed to the model capturing richer interactions with the addition of the engineered numerical features.
+
+### Fairness Analysis
+
+For the assessment of fairness, I chose to look at the number of steps a recipe has, comparing shorter recipes with longer ones.
+  - **Group X**: recipes with less than 10 steps
+  - **Group Y**: rceipes with 10 or more steps
+
+**Null Hypothesis**: The model is fair. It's RMSE is the sanme for recipes with less than 10 steps and recipes with 10 or more steps. Any observed difference is due to just random chance.
+
+**Alternate Hypothesis**: The model is not fair. The RMSE is higher for recipes with less than 10 steps compared to recipes with 10 or more steps.
+
+**Test Statistic**: root mean squared error (RMSE) of short recipes - RMSE of long recipes
+  - Difference in precision = RMSEx - RMSEy
+
+**Significance Level**: 0.01
+
+To start the analysis, I split the recipes into two groups: short recipes and long recipes. Short recipes were designated to be ones where `n_steps` <9 and long recipes were designated to be ones where `n_steps` >= 9. Nine is the median number of steps in the dataset, which is why it was chosen to be the cutoff between high and low, and the median is robust to any outliers and guarantees a whole number result in this case. I evaluated the precision parity of the model because I wanted to test against false positives as to not mislead users with incorrect labels, and therefore discourage users from trying certain rceipes.
+
+To begin, I calculated the RMSE for both group X and group Y to find an observed test statistic of **-2.98**. Then, I shuffled the group labels 1000 times and recalculated the RMSE of each shuffled group to construct a distribution of differences under the null. The resulting p-value was **0.7270**, which is higher than the significance level of 0.01, leading me to **fail to reject the null hypothesis** that the model is fair. According to these reuslts, there is no significant difference between the model's RMSE for recipes of fewer steps and recipes of more steps. 
+
