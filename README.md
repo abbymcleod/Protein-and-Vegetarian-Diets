@@ -112,6 +112,35 @@ The final data frame had the following data types:
 - **protein**: float64 
 - **tags_str**: object 
 
+The resulting DataFrame contains multiple rows for one recipe if the recipe had multiple reviews mapped to it. As I will not be using the data in the reviews column during my analysis, I decided to create a DataFrame called `'grouped'` where I grouped `'merged'` by `'id'` so that each recipe is represented in just one row. This step reduces bias as recipes with many reviews will not be weigthed higher than those with fewer reviews in the analysis. Going forward, I will mainly be using the resulting DataFrame. 
+
+#### Univariate Analysis
+
+I examined the distribution of protein content (PDV) in a recipe. The plot below shows that protein content is skewed to the right, suggesting that most recipes in the dataset have under 50% of daily protein intact in them, with some outliers containing higher amounts of protein. 
+
+<iframe
+  src="assets/univariate.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+#### Bivariate Analysis
+
+To start off, I suspected there must be a positive relationship between the variables `'n_steps'` and `'n_ingredients'`, so I created a scatter plot with a trend line to investigate. The plot below shows that there is a positive relationship between these two variables, but it also looks like there is a decent amount of variance that should be investigated further without drawing any conclusions.   
+
+<iframe
+  src="assets/bivariate.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+#### Interesting Aggregates
+
+To further explore the relationship between number of steps and number of ingredients, I created a pivot table that groups recipes into bins based on the number of ingredients they require, and shows the average number of steps, as well as the average rating of each bin. The average steps column reinforces the belief that the number of steps and number of ingredients in a recipe are correlated positively. Until the largest bin, there is a substantial increase in average steps as the number of ingredients increase. There is less of an evident relationship between number of ingredients and rating in this table. However, the last two bins, representing recipes with many steps, do show a significant increase in average rating. This could be due to more complex, advanced recipes involving many steps having higher satisfaction ratings due to their complexity. 
+
+<iframe src="assets/pivot.html" width="100%" height="400px"></iframe>
 
 ## Assessment of Missingness
 
@@ -145,7 +174,6 @@ The column `'rating'` is one that I beleive could have a variety of reasons just
   height="600"
   frameborder="0"
 ></iframe>
-
 As displayed in the above figure, the observed tvd is much higher than any of the values calculated during the permutation test under the null. The p-value of this test is 0.0000, which is less than the chosen significance level of 0.01. So, if the null hypothesis were true, it would be extremely unlikely that there is a statistic as drastic, or more drastic than the observed statistic, leading me to **reject the null hypothesis**, and conclude that the missingness of the ratings is **MAR**.
 
 This makes sense as people could be less inclined to leave a rating if they were left underwhelmed or uninterested by a recipe. Additionally, food.com or recipe curators may only encourage people to leave ratings if they enjoyed their recipe, but not provide the same encouragement if they didn't.
