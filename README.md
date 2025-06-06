@@ -219,6 +219,8 @@ Additionally, when running this test, I used a grouped version of the dataframe 
 
 It was orignially proposed that vegan and vegetarian recipes have less protein than normal recipes because a primary source of protein in many recipes is animal products, which vegan recipes totally lack, and vegetarian recipes partially lack. The reuslting **p-value** from this test is **0.000**, which is below the significance level, leading us to **reject the null hypothesis** in favor of the alternate. This means that it is unlikely for us to observe the values we did if the null hypothesis is true, suggesting that vegan and vegetarian recipes could correlate with lower protein content. 
 
+The graph below demonstrates just how different the averages between the two groups are with an 18.43 % differnece on average.
+
 <iframe
   src="assets/ttest.html"
   width="800"
@@ -237,3 +239,34 @@ The baseline model is a lienar regression model that predicts the percent daily 
 After fitting the model to the training data, I used **mean squared error (MSE)** to evaluate its performance. The MSE of the baseline model was **1737.5018** which indicates that the model's predictions are about 41.68% off on average. There is definitely room for the model's performance to imporve as the error is relatively large. To improve predictive performance, I plan on filtering the features to only include those that have a certain threshold numbe rof recipes that have then to avoid any sparse tags from skewing the model's predictions.
 
 ### Final Model
+
+The final model contained new features calories per minute, and steps per ingredient, and also only included a refined list of tags. 
+
+#### Tags
+
+Instead of using the entire population of unique tags which was 549, only tags that appeared in over 2000 recipes were used, resulting in a set of **106** tags. This was a necessary step because there were hundreds of tags such as `'irish-st-patricks-day'` that had only one, or close to one use, and therefore wouldn't be of much use in the prediction model.
+
+#### Calories per Minute
+
+This feature was calculated by extracting the calorie count from the `'nutrition'` column and dividing it by the total cooking time in the column `'minutes'` plus one to avoid division by zero. Recipes with higher amounts of protein are likely meat heavy, as illustrated by the hypothesis test from earlier, which can correlate with higher calorie count. Sorter cooking times can also go hand in hand with higher protein due to a variety of short methods of cooking meats such as grilling or searing. By normalizing calorie count by cooking time, recipes that are efficient in delivering calories, and possibly also protein, are captured. 
+
+#### Steps per Ingredient
+
+The steps per ingredient feature was calculated as the number of steps, `'n_steps'`, divided by the number of ingredients, `'n_ingredients'`, plus one. This feature highlights the complexity of a recipe as recipes with more steps might require more advnaced techniques. More advanced techniques could be associated with sophisticated recipes that include multiple protein rich components.
+
+These features were chosen because protein content is not based solely on the textual tags, but also by the complexity of preperation and nutrient profile. Both new features reference the process of making a dish, breaking down all of its steps and components, rather than just the tags that are assigned to the dish after the fact. 
+
+#### Modeling and Hyperparameters
+
+The chosen model was **RandomForestRegressor**. Random forests are esspecially strong for capturing non linear relationships and interactions between features, and they also are good at handling mixed data types. Additionally, random forests are robust to noisy data and less likely to overfit data compared to a single decision tree.
+
+The **hyperparameters** tuned are as follows:
+  - `n_estimators`: This is the number of trees in the forest which was tuned to balance model stability and runtime.
+  - `max_depth`: This hyperparameter controls tree depth which helped to avoid overfitting.
+  - `min_samples_split`: This is the minimum number of samples required to split an internal node, which helps control model complexity.
+
+Out of all the hyperparameters used, the best were `{'regressor__max_depth': 10, 'regressor__n_estimators': 100, 'regressor__min_samples_split': 2}`. This combination does the best job at capturing enough complexity to model the engineered features and target variable while avoiding overfitting. To select the best hyperparameters, I used `GridSearchCV` with 5 fold cross validation on the training data which selected the mdoel with the lowest MSE on validation folds.
+
+#### Performance
+
+The final model had a MSE of **982.58** which is a significant improvement from the baseline model with a MSE of 1737.5018. This value means that, on average, the final model's prediction is off by about 31.35% daily value. This imporvement can be attributed to the model capturing richer interactions with the addition of the engineered numerical features.
