@@ -168,8 +168,6 @@ To further explore the relationship between number of steps and number of ingred
 | 26-30 | 4.776386820934078 | 24.141304347826086 |
 | 31+ | 5.0 | 20.666666666666668 |
 
-<iframe src="assets/pivot.html" width="100%" height="400px"></iframe>
-
 ## Assessment of Missingness
 
 The columns `'date'`, `'rating'`, and `'review'` have a significant amount of missing values in the `merged` dataset, so I will assess the missingness of these variables in `merged`. 
