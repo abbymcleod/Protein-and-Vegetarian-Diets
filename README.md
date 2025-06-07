@@ -122,7 +122,7 @@ The first five rows of `'merged'` is displayed below.
 | 306168 | 40 | 50969 | 2008-05-30 | ['60-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'side-dishes', 'vegetables', 'easy', 'beginner-cook', 'broccoli'] | [194.8, 20.0, 6.0, 32.0, 22.0, 36.0, 3.0] | 6 | ['frozen broccoli cuts', 'cream of chicken soup', 'sharp cheddar cheese', 'garlic powder', 'ground black pepper', 'salt', 'milk', 'soy sauce', 'french-fried onions'] | 9 | 1196280.0 | 5.0 | 5.0 | 22.0 | 60-minutes-or-less time-to-make course main-ingredient preparation side-dishes vegetables easy beginner-cook broccoli |
 | 306168 | 40 | 50969 | 2008-05-30 | ['60-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'side-dishes', 'vegetables', 'easy', 'beginner-cook', 'broccoli'] | [194.8, 20.0, 6.0, 32.0, 22.0, 36.0, 3.0] | 6 | ['frozen broccoli cuts', 'cream of chicken soup', 'sharp cheddar cheese', 'garlic powder', 'ground black pepper', 'salt', 'milk', 'soy sauce', 'french-fried onions'] | 9 | 768828.0 | 5.0 | 5.0 | 22.0 | 60-minutes-or-less time-to-make course main-ingredient preparation side-dishes vegetables easy beginner-cook broccoli |
 
-The resulting DataFrame contains multiple rows for one recipe if the recipe had multiple reviews mapped to it. As I will not be using the data in the reviews column during my analysis, I decided to create a DataFrame called `'grouped'` where I grouped `'merged'` by `'id'` so that each recipe is represented in just one row. This step reduces bias as recipes with many reviews will not be weigthed higher than those with fewer reviews in the analysis. Going forward, I will mainly be using the resulting DataFrame. The first five rows of `'grouped'` are shown below.
+The resulting DataFrame contains multiple rows for one recipe if the recipe had multiple reviews mapped to it. As I will not be using the data in the reviews column during my analysis, I decided to create a DataFrame called `'grouped'` where I grouped `'merged'` by `'id'` so that each recipe is represented in just one row. Additionally, I dropped the columns that were not consistent across all instances of that recipe as they were not pertinant to my analysis. These columns included `'rating'`, `'user_id'`,`'submitted'`, and `'contributor_id'`.This step reduces bias as recipes with many reviews will not be weigthed higher than those with fewer reviews in the analysis. Going forward, I will mainly be using the resulting DataFrame. The first five rows of `'grouped'` are shown below.
 
 | minutes | tags | nutrition | n_steps | ingredients | n_ingredients | avg_rating | protein | tags_str |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -172,7 +172,7 @@ To further explore the relationship between number of steps and number of ingred
 
 ## Assessment of Missingness
 
-The columns `'date'`, `'rating'`, and `'review'` have a significant amount of missing values in the dataset, so I will assess the missingness of these variables. 
+The columns `'date'`, `'rating'`, and `'review'` have a significant amount of missing values in the `merged` dataset, so I will assess the missingness of these variables in `merged`. 
 
 ### NMAR Analysis
 
